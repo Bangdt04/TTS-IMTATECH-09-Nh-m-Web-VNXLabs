@@ -1,8 +1,10 @@
-import React from 'react'
+import ProductDetailPage from "@/pages/client/product-detail/ProductDetailPage";
+import React, { useState } from "react";
 
 import { BiSolidLike } from "react-icons/bi";
 import { FaSave } from "react-icons/fa";
 import { IoEyeOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 const ProductPage = () => {
   return (
@@ -19,7 +21,9 @@ const ProductPage = () => {
 
       <div className="flex justify-between">
         <div className="flex flex-col pt-2">
-          <h2 className="text-lg font-medium cursor-pointer">Product 1</h2>
+          <h2 className="text-lg font-medium cursor-pointer">
+            <Link to={`/product/1`}>Product 1</Link>
+          </h2>
           <p className="text-xs cursor-pointer">Description of Product 1</p>
         </div>
         <div className="flex gap-3">
@@ -35,6 +39,6 @@ const ProductPage = () => {
       </div>
     </div>
   );
-}
+};
 
-export default ProductPage
+export default ProductPage;
