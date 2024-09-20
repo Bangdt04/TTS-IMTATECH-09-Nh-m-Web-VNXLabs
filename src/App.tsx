@@ -3,12 +3,14 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import LayoutCLient from "./layout/LayoutCLient";
 import ProductDetailPage from "./pages/client/product-detail/ProductDetailPage";
+import HomePage from "./components/client/HomePage";
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<LayoutCLient />}>
-          <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route index element={<HomePage />} />
+          <Route path="/product/:id" element={<HomePage />} />
         </Route>
       </Routes>
     </>
