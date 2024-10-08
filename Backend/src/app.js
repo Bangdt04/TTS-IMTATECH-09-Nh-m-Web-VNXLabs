@@ -7,6 +7,7 @@ import { connectDB } from "./config/db";
 import authRouter from "./routers/auth";
 import contactRouter from "./routers/contact";
 import postRouter from "./routers/post";
+import commentRouter from "./routers/comment";
 
 const app = express();
 dotenv.config();
@@ -22,6 +23,7 @@ connectDB(process.env.DB_URI);
 app.use("/api", authRouter);
 app.use('/api', postRouter);
 app.use("/api", contactRouter);
+app.use("/api", commentRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
