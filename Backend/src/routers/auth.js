@@ -9,6 +9,9 @@ import {
   getUsers,
   promoteToAdmin,
   changePassword,
+  followUser,
+  getFlowUser,
+  getFlowId,
 } from "../controllers/auth.js";
 import { checkAdmin, checkAuth } from "../middleware/checkAuth.js";
 
@@ -28,5 +31,8 @@ router.patch(
 );
 router.patch("/users/:userId/promote", checkAuth, checkAdmin, promoteToAdmin);
 router.put("/users/:userId/change-password", checkAuth, changePassword);
+router.post("/users/follow/:id", checkAuth, followUser)
+router.get("/follow", checkAuth, getFlowUser)
+router.get("/followId/:id", getFlowId)
 
 export default router;
