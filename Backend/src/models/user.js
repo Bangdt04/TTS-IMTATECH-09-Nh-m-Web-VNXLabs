@@ -21,9 +21,19 @@ const userSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    follow: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: [],
+    }],
+    count_follow: {
+      type: Number,
+      default: 0,
+    },
+
     avatar: {
       type: String,
-      default: "../upload/default-avatar.jpeg",
+      default: "https://res.cloudinary.com/dzurnefms/image/upload/v1720926823/project_cn/zyys4rs4omlfcs1u7nww.png",
     },
     isBlocked: {
       type: Boolean,
