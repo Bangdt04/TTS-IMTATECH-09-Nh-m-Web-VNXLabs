@@ -283,4 +283,92 @@ export const changePassword = async (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {};
+export const followUser = async (req, res) => {
+  try {
+    const user = req.user
+    const userId = req.params.id
+    console.log("helo");
+    console.log(user, userId);
+
+
+    if (!userId) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Vui lòng nhập userId",
+      });
+    }
+    if (user._id.toString() === userId) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Không thể theo dõi chính mình",
+      });
+    }
+    const followedUser = await User.findById(userId);
+    if (!followedUser) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "Người dùng không tồn tại",
+      });
+    }
+    if (followedUser.follow.includes(user._id)) {
+      followedUser.follow = followedUser.follow.filter(userId => userId.toString() !== user._id.toString());
+      followedUser.count_follow -= 1;
+    } else {
+      followedUser.follow.push(user._id);
+      followedUser.count_follow += 1;
+    }
+
+    await followedUser.save();
+    return res.status(StatusCodes.OK).json({
+      message: "Đã theo dõi người dùng",
+      user: followedUser,
+    });
+
+  } catch (error) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: "Đã xảy ra l��i khi theo dõi người dùng",
+    });
+
+  }
+}
+
+export const getFlowUser = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user || !user._id) {
+      return res.status(400).json({ message: "Người dùng không hợp lệ." });
+    }
+    const userWithFollow = await User.findById(user._id).populate("follow");
+    if (!userWithFollow) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+
+    return res.status(200).json({
+      message: "Lấy thông tin người dùng thành công",
+      user: userWithFollow,
+    });
+
+  } catch (error) {
+    console.error("Lỗi khi lấy thông tin người dùng:", error);
+    return res.status(500).json({ message: "Lỗi máy chủ", error });
+  }
+};
+
+export const getFlowId = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ message: "Vui lòng nhập userId" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+    return res.status(200).json({
+      message: "Lấy thông tin người dùng thành công",
+      user: user,
+    });
+
+  } catch (error) {
+    return res.status(500).json({ message: "Lỗi máy chủ", error });
+  }
+}
+
+export const logout = async (req, res) => { };
