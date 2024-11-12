@@ -7,6 +7,9 @@ interface Props {
 }
 const ListComment = ({ comment }: Props) => {
   console.log(comment);
+  console.log("abc");
+  console.log("xyz");
+
   return (
     <div className="p-7 flex flex-col gap-8">
       <div className="p-7 flex flex-col gap-8">
