@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import VectorArrowDown from "../../assets/images/Arrow down-circle.svg";
-import VectorAvatar from "../../assets/images/avata.png"; // Check this path
-import { Link, useNavigate } from "react-router-dom";
+import VectorAvatar from "../../assets/images/avata.png";
+import { Link } from "react-router-dom";
 import CreatePost from "./CreateProject";
 import { Modal, Box, Button, Typography, Avatar, Grid } from "@mui/material";
 import axios from "axios";
+import { FaRegEye } from "react-icons/fa";
+import Follow from "./Follow";
+import { getFlowUser } from "@/service/follow";
 
-// Define the Post interface
 interface Post {
   _id: string;
   title: string;
   content: string;
-  images: string | string[]; // Updated to allow for both string and array
+  images: string | string[];
 }
 
 const Profile = () => {
@@ -19,9 +21,10 @@ const Profile = () => {
   const dataUser = user && JSON.parse(user);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [openModal, setOpenModal] = useState(false);
-  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [dataFollow, setDataFollow] = useState([]);
+  const token = localStorage.getItem("token");
 
-  // Fetch posts by user ID when the component mounts
   useEffect(() => {
     const fetchUserPosts = async () => {
       try {
@@ -48,7 +51,16 @@ const Profile = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login");
+    window.location.reload();
+  };
+
+  const handleFetch = async () => {
+    try {
+      const { data } = await getFlowUser(token as string);
+      setDataFollow(data.user);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -76,6 +88,18 @@ const Profile = () => {
           <Typography variant="h4" className="text-center font-bold">
             {dataUser?.name}
           </Typography>
+          <div className="flex gap-4 items-center">
+            <p>Số người theo dõi: {dataUser?.count_follow || 0}</p>
+            <div
+              className=""
+              onClick={() => {
+                setOpen(true);
+                handleFetch();
+              }}
+            >
+              <FaRegEye size={20} />
+            </div>
+          </div>
           <Link to={`edit/${dataUser?._id}`} className="w-full">
             <Button
               variant="contained"
@@ -136,7 +160,7 @@ const Profile = () => {
 
         <div className="w-3/4">
           <section className="mt-8">
-            <Typography variant="h5" className="text-2xl font-bold">
+            <Typography variant="h5" className="text-2xl font-bold mb-4">
               My Posts
             </Typography>
             <Grid container spacing={2} className="mt-4">
@@ -176,14 +200,9 @@ const Profile = () => {
                 ))
               ) : (
                 <Grid item xs={12}>
-                  <div className="border p-4 rounded-lg shadow-lg bg-white text-center">
-                    <Typography variant="h6" className="text-gray-500">
-                      You have no posts yet.
-                    </Typography>
-                    <Typography variant="body2" className="text-gray-400 mt-2">
-                      Start creating your first post!
-                    </Typography>
-                  </div>
+                  <Typography variant="body1" className="text-gray-500 text-center mt-4">
+                    No posts found.
+                  </Typography>
                 </Grid>
               )}
               <Grid item xs={12} sm={6} md={4}>
@@ -218,8 +237,8 @@ const Profile = () => {
                 boxShadow: 3,
                 bgcolor: "#f9f9f9",
                 marginTop: 5,
-                overflowY: "auto", // Allow scrolling
-                maxHeight: "80vh", // Limit modal height
+                overflowY: "auto", 
+                maxHeight: "80vh",
               }}
             >
               <CreatePost />
@@ -227,6 +246,13 @@ const Profile = () => {
           </Modal>
         </div>
       </section>
+      {open && (
+        <Follow
+          open={open}
+          handleClose={() => setOpen(false)}
+          dataFollow={dataFollow}
+        />
+      )}
     </div>
   );
 };
